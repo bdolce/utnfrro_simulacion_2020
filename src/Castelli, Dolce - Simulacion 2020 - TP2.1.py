@@ -13,6 +13,11 @@ def lcg(m, a, c, x):
     x = (a * x + c) % m 
     return x
 
+def middle_square(seed):
+    number = seed
+    number = int(str(number * number).zfill(8)[2:6])  # zfill adds padding of zeroes
+    return number / 9999
+
 
 if __name__ == "__main__":
 
@@ -25,13 +30,18 @@ if __name__ == "__main__":
     random_x = []
 
     x = seed
+    #x = 99
     total = 262144
 
-    #for i in range(262144):
+    # #LCG
     for i in range(total):
         x = lcg(m,a,c,x)
         random_x.append(x/m)
 
+    #Middle-square
+    # for i in range(total):
+    #     x = middle_square(x)
+    #     random_x.append(x)
 
     #here we go.. again
     casillas = [a/100 for a in range(101)]
@@ -39,32 +49,39 @@ if __name__ == "__main__":
     esperadas = [total/100 for i in range(101)]
 
 
-    for n in random_x:
-        if n == 1:
-            observadas[100] += 1
-        else:
-            for i in range(len(casillas)):
-                if casillas[i] <= n and n < casillas[i+1]:
-                    observadas[i] += 1
-                    break
+
+    #Prueba Chi_cuadrado
+
+    # for n in random_x:
+    #     if n == 1:
+    #         observadas[100] += 1
+    #     else:
+    #         for i in range(len(casillas)):
+    #             if casillas[i] <= n and n < casillas[i+1]:
+    #                 observadas[i] += 1
+    #                 break
 
 
-    oi_ei = []
+    # oi_ei = []
 
-    for i in range(len(observadas)):
-        oi_ei.append(((observadas[i]-esperadas[i])**2 ) / esperadas[i])
+    # for i in range(len(observadas)):
+    #     oi_ei.append(((observadas[i]-esperadas[i])**2 ) / esperadas[i])
 
-    chicuadrado = sum(oi_ei)
+    # chicuadrado = sum(oi_ei)
 
-    #print(observadas)
-    #p_value = chisquare(observadas,esperadas)
+    # #print(observadas)
+    # #p_value = chisquare(observadas,esperadas)
 
-    p_value = chi2.sf(chicuadrado,99)
-    #print(observadas)
-    #print(esperadas)
+    # p_value = chi2.sf(chicuadrado,99)
+    # #print(observadas)
+    # #print(esperadas)
     
-    print(chicuadrado)
-    print(p_value)
+    # print(chicuadrado)
+    # print(p_value)
+
+
+
+    #Muestra imagen
 
     cont = 0
     cont_blancos = 0
@@ -85,20 +102,3 @@ if __name__ == "__main__":
    # print("Negros: " + str(cont_negros))
 
     img.show()
-
-
-
-# seed_number = int(input("Please enter a four digit number:\n[####] "))
-# number = seed_number
-# already_seen = set()
-# counter = 0
-
-# while number not in already_seen:
-#     counter += 1
-#     already_seen.add(number)
-#     number = int(str(number * number).zfill(8)[2:6])  # zfill adds padding of zeroes
-#     print(f"#{counter}: {number}")
-
-# print(f"We began with {seed_number}, and"
-#       f" have repeated ourselves after {counter} steps"
-#       f" with {number}.")
