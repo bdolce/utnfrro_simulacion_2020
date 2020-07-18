@@ -1,12 +1,6 @@
 import time
-from PIL import Image
 import matplotlib.pyplot as plt
-from random import random
-from itertools import repeat
 from scipy.stats import chisquare
-from math import sqrt
-from scipy.stats.distributions import chi2
-import numpy as np
 from matplotlib.ticker import MaxNLocator
 from collections import Counter
 
