@@ -1,6 +1,7 @@
 from enum import Enum
 from random import random
 from numpy import log
+import matplotlib.pyplot as plt
 
 class Queue_mm1():
 
@@ -81,19 +82,80 @@ class Queue_mm1():
             for i in range(self.num_in_q):
                 self.time_arrival[i] = self.time_arrival[i + 1]
 
+    def calcula_probabilidad_n_cola(self,n):
+        prob = []
+        ro = self.parameter_lambda / self.parameter_mu
+
+        for i in range(n+1):
+            if i == 0:
+                prob.append(1-ro**2)
+            else:
+                prob.append(ro**(i+1) * (1-ro))
+
+        return prob
+
+    def calcula_probabilidad_n_sistema(self,n):
+        prob = []
+        self.parameter_lambda = 1 * self.parameter_mu
+        ro = self.parameter_lambda / self.parameter_mu
+
+        for i in range(n+1):
+            a = ro**i * (1-ro)
+            prob.append(a)
+        
+        return prob
+
+    def calcula_probabilidad_denegacion_servicio(self,n):
+        suma = 0
+        self.parameter_lambda = 1 * self.parameter_mu
+        ro = self.parameter_lambda / self.parameter_mu
+
+        for i in range(n+1):
+            suma += ro**(i+1)
+
+        prob = ro - ((1-ro) * suma )
+        
+        return prob
+
+    def grafica_prob(self, lista):
+
+        plt.hist(lista)
+        plt.ylabel('')
+        
+        win_manager = plt.get_current_fig_manager()
+        win_manager.window.state('zoomed')
+        
+        #plt.savefig("Grafica largo de semilla " + str(longitudes[l]) +".png")
+        plt.show()
+
     def report(self):
         promedio_clientes_cola = self.area_num_in_q / self.time
         promedio_clientes_sistema = promedio_clientes_cola + self.parameter_lambda / self.parameter_mu
         tiempo_promedio_cola = self.total_of_delays / self.nums_custs_delayed
         tiempo_promedio_sistema = tiempo_promedio_cola + 1 / self.parameter_mu
         utilizacion_servidor = self.area_server_status / self.time
+       # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
+        prob_n_sistema = self.calcula_probabilidad_n_sistema(n=5)
+        prob_den_servicio = self.calcula_probabilidad_denegacion_servicio(n=50)
+
 
         print('REPORT ')
-        print('Promedio de clientes en sistema ' + str(promedio_clientes_sistema))
-        print('Tiempo promedio en sistema ' + str(tiempo_promedio_sistema))
+        #Informa estadísticos
         print('q(n) - Promedio clientes en cola ' + str(promedio_clientes_cola))
+        print('Promedio de clientes en sistema ' + str(promedio_clientes_sistema))
         print('d(n) - Tiempo promedio en cola ' + str(tiempo_promedio_cola))
+        print('Tiempo promedio en sistema ' + str(tiempo_promedio_sistema))
         print('u(n) - Utilizacion del servidor ' + str(utilizacion_servidor))
+        
+        #print('Probabilidad de n clientes en cola ' + str(prob_n_cola))
+        print('Probabilidad de n clientes en sistema ' + str(prob_n_sistema))
+        print('Probabilidad de denegacion de servicio ' + str(prob_den_servicio))
+        
+        #self.grafica_prob(lista=prob_n_cola)
+        #self.grafica_prob(lista=prob_n_sistema)
+        #self.grafica_prob(lista=prob_den_servicio)
+
+        #Tiempo total de la simulación
         print('Time simulation ended ' + str(self.time))
 
     def update_time_avg_stats(self):
@@ -126,9 +188,9 @@ if __name__ == "__main__":
     #PARAMETROS
     num_events = 2
     mean_interarrival = 1
-    mean_service = 0.25
-    num_delays_required = 10000
-    Q_LIMIT = 10000000
+    mean_service = 1
+    num_delays_required = 1000
+    Q_LIMIT = 100000
 
     print('MM1')
 
