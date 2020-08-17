@@ -31,6 +31,10 @@ class Queue_mm1():
 
         self.min_time_next_event = 0.0
         self.next_event_type = 0
+
+
+        self.qdet = []
+        self.qdet.append(self.area_num_in_q)
     
     def timing(self):
         self.min_time_next_event = 10 ** 29
@@ -54,9 +58,9 @@ class Queue_mm1():
         if self.server_status == 1:
             self.num_in_q += 1
 
-            if (self.num_in_q > self.Q_LIMIT):
-                print('OVERFLOW')
-                exit()
+            # if (self.num_in_q > self.Q_LIMIT):
+            #     print('OVERFLOW')
+            #     exit()
         
             self.time_arrival[self.num_in_q] = self.time
         else:
@@ -134,7 +138,6 @@ class Queue_mm1():
         tiempo_promedio_cola = self.total_of_delays / self.nums_custs_delayed
         tiempo_promedio_sistema = tiempo_promedio_cola + 1 / self.parameter_mu
         utilizacion_servidor = self.area_server_status / self.time
-       # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
         prob_n_sistema = self.calcula_probabilidad_n_sistema(n=5)
         prob_den_servicio = self.calcula_probabilidad_denegacion_servicio(n=50)
 
@@ -142,18 +145,21 @@ class Queue_mm1():
         print('REPORT ')
         #Informa estadísticos
         print('q(n) - Promedio clientes en cola ' + str(promedio_clientes_cola))
-        print('Promedio de clientes en sistema ' + str(promedio_clientes_sistema))
-        print('d(n) - Tiempo promedio en cola ' + str(tiempo_promedio_cola))
-        print('Tiempo promedio en sistema ' + str(tiempo_promedio_sistema))
-        print('u(n) - Utilizacion del servidor ' + str(utilizacion_servidor))
+        # print('Promedio de clientes en sistema ' + str(promedio_clientes_sistema))
+        # print('d(n) - Tiempo promedio en cola ' + str(tiempo_promedio_cola))
+        # print('Tiempo promedio en sistema ' + str(tiempo_promedio_sistema))
+        # print('u(n) - Utilizacion del servidor ' + str(utilizacion_servidor))
         
-        #print('Probabilidad de n clientes en cola ' + str(prob_n_cola))
-        print('Probabilidad de n clientes en sistema ' + str(prob_n_sistema))
-        print('Probabilidad de denegacion de servicio ' + str(prob_den_servicio))
+        # #print('Probabilidad de n clientes en cola ' + str(prob_n_cola))
+        # print('Probabilidad de n clientes en sistema ' + str(prob_n_sistema))
+        # print('Probabilidad de denegacion de servicio ' + str(prob_den_servicio))
         
-        #self.grafica_prob(lista=prob_n_cola)
-        #self.grafica_prob(lista=prob_n_sistema)
-        #self.grafica_prob(lista=prob_den_servicio)
+        plt.plot(self.qdet)
+        plt.show()
+       # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
+       # self.grafica_prob(lista=prob_n_cola)
+      #  self.grafica_prob(lista=prob_n_sistema)
+      #  self.grafica_prob(lista=prob_den_servicio)
 
         #Tiempo total de la simulación
         print('Time simulation ended ' + str(self.time))
@@ -162,6 +168,8 @@ class Queue_mm1():
         self.time_since_last_event = self.time - self.time_last_event
         self.time_last_event = self.time
 
+
+        self.qdet.append(self.num_in_q * self.time_since_last_event / self.time)
         self.area_num_in_q += self.num_in_q * self.time_since_last_event
         self.area_server_status += self.server_status * self.time_since_last_event
 
