@@ -36,6 +36,10 @@ class Queue_mm1():
 
         self.min_time_next_event = 0.0
         self.next_event_type = 0
+
+
+        self.qdet = []
+        self.qdet.append(self.area_num_in_q)
     
     def timing(self):
         self.min_time_next_event = 10 ** 29
@@ -59,9 +63,9 @@ class Queue_mm1():
         if self.server_status == 1:
             self.num_in_q += 1
 
-            if (self.num_in_q > self.Q_LIMIT):
-                print('OVERFLOW')
-                exit()
+            # if (self.num_in_q > self.Q_LIMIT):
+            #     print('OVERFLOW')
+            #     exit()
         
             self.time_arrival[self.num_in_q] = self.time
         else:
@@ -167,9 +171,12 @@ class Queue_mm1():
         #print('Probabilidad de n clientes en sistema ' + str(metricas['prob_n_sistema']))
         #print('Probabilidad de denegacion de servicio ' + str(metricas['prob_den_servicio']))
         
-        #self.grafica_prob(lista=prob_n_cola)
-        #self.grafica_prob(lista=prob_n_sistema)
-        #self.grafica_prob(lista=prob_den_servicio)
+        plt.plot(self.qdet)
+        plt.show()
+       # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
+       # self.grafica_prob(lista=prob_n_cola)
+      #  self.grafica_prob(lista=prob_n_sistema)
+      #  self.grafica_prob(lista=prob_den_servicio)
 
         #Tiempo total de la simulación
         print('Time simulation ended ' + str(self.time))
@@ -200,6 +207,8 @@ class Queue_mm1():
         self.time_since_last_event = self.time - self.time_last_event
         self.time_last_event = self.time
 
+
+        self.qdet.append(self.num_in_q * self.time_since_last_event / self.time)
         self.area_num_in_q += self.num_in_q * self.time_since_last_event
         self.area_server_status += self.server_status * self.time_since_last_event
 
