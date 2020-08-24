@@ -158,28 +158,28 @@ class Queue_mm1():
 
         return metricas
 
-    def reporte_metricas(self,metricas):
-        print('REPORT ')
-        #Informa estadísticos
-        print('q(n) - Promedio clientes en cola ' + str(metricas['promedio_clientes_cola']))
-        print('Promedio de clientes en sistema ' + str(metricas['promedio_clientes_sistema']))
-        print('d(n) - Tiempo promedio en cola ' + str(metricas['tiempo_promedio_cola']))
-        print('Tiempo promedio en sistema ' + str(metricas['tiempo_promedio_sistema']))
-        print('u(n) - Utilizacion del servidor ' + str(metricas['utilizacion_servidor']))
+    # def reporte_metricas(self,metricas):
+    #     print('REPORT ')
+    #     #Informa estadísticos
+    #     print('q(n) - Promedio clientes en cola ' + str(metricas['promedio_clientes_cola']))
+    #     print('Promedio de clientes en sistema ' + str(metricas['promedio_clientes_sistema']))
+    #     print('d(n) - Tiempo promedio en cola ' + str(metricas['tiempo_promedio_cola']))
+    #     print('Tiempo promedio en sistema ' + str(metricas['tiempo_promedio_sistema']))
+    #     print('u(n) - Utilizacion del servidor ' + str(metricas['utilizacion_servidor']))
         
-        #print('Probabilidad de n clientes en cola ' + str(prob_n_cola))
-        #print('Probabilidad de n clientes en sistema ' + str(metricas['prob_n_sistema']))
-        #print('Probabilidad de denegacion de servicio ' + str(metricas['prob_den_servicio']))
+    #     #print('Probabilidad de n clientes en cola ' + str(prob_n_cola))
+    #     #print('Probabilidad de n clientes en sistema ' + str(metricas['prob_n_sistema']))
+    #     #print('Probabilidad de denegacion de servicio ' + str(metricas['prob_den_servicio']))
         
-        plt.plot(self.qdet)
-        plt.show()
-       # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
-       # self.grafica_prob(lista=prob_n_cola)
-      #  self.grafica_prob(lista=prob_n_sistema)
-      #  self.grafica_prob(lista=prob_den_servicio)
+    #     plt.plot(self.qdet)
+    #     plt.show()
+    #    # prob_n_cola = self.calcula_probabilidad_n_cola(n=5)
+    #    # self.grafica_prob(lista=prob_n_cola)
+    #   #  self.grafica_prob(lista=prob_n_sistema)
+    #   #  self.grafica_prob(lista=prob_den_servicio)
 
-        #Tiempo total de la simulación
-        print('Time simulation ended ' + str(self.time))
+    #     #Tiempo total de la simulación
+    #     print('Time simulation ended ' + str(self.time))
 
 
     # def report(self):
@@ -218,7 +218,7 @@ class Queue_mm1():
 
     def simmulate(self):
 
-        cant_simulaciones = 20
+        cant_simulaciones = 10
         metricas_simulacion = []
 
         for i in range(cant_simulaciones):
@@ -243,7 +243,8 @@ class Queue_mm1():
         #for m in metricas_simulacion:
         #    print(m) 
 
-        self.grafica_metricas(metricas_simulacion)
+        # self.grafica_metricas(metricas_simulacion)
+        return self.devuelve_metricas(metricas_simulacion)
 
     def grafica_metricas(self, metricas_simulacion):
         
@@ -254,39 +255,90 @@ class Queue_mm1():
         utilizacion_servidor = []
         
         for m in metricas_simulacion:
+            clientes_cola.append(m['clientes_cola_avg'])
+            clientes_sistema.append(m['clientes_sistema_avg'])
+            tiempo_promedio_cola.append(m['tiempo_promedio_cola_avg'])
+            tiempo_promedio_sistema.append(m['tiempo_promedio_sistema_avg'])
+            utilizacion_servidor.append(m['utilizacion_servidor_avg'])
+
+
+        
+        tasas_arribos = [0.25, 0.5, 0.75, 1, 1.25]
+        fig=plt.figure()
+        fig.add_subplot(3,2,1)
+        plt.plot(clientes_cola)
+        plt.title("Clientes promedio en cola")
+        # plt.show()
+        # print('Clientes en cola ' + str(clientes_cola))
+        # self.informa_estadisticos(clientes_cola)
+
+        fig.add_subplot(3,2,2)
+        plt.plot(clientes_sistema)
+        plt.title("Clientes promedio en sistema")
+        # plt.show()
+        # # print('Clientes en sistema ' )#+ str(clientes_sistema))
+        # # self.informa_estadisticos(clientes_sistema)
+
+        fig.add_subplot(3,2,3)
+        plt.plot(tiempo_promedio_cola)
+        plt.title("Tiempo promedio en cola")
+        # plt.show()
+        # # print('Tiempo promedio en cola ' )#+ str(tiempo_promedio_cola))
+        # # self.informa_estadisticos(tiempo_promedio_cola)
+
+        fig.add_subplot(3,2,4)
+        plt.plot(tiempo_promedio_sistema)
+        plt.title("Tiempo promedio en sistema")
+        # plt.show()
+        # # print('Tiempo promdio en sistema ' )# + str(tiempo_promedio_sistema))
+        # # self.informa_estadisticos(tiempo_promedio_sistema)
+
+        fig.add_subplot(3,2,5)
+        plt.plot(utilizacion_servidor)
+        plt.title("Utilizacion del servidor")
+        # plt.show()
+        # # print('Utilizacion del servidor ' )#+ str(utilizacion_servidor))
+        # # self.informa_estadisticos(utilizacion_servidor)
+
+        plt.show()
+ 
+    def devuelve_metricas(self, metricas_simulacion):
+        
+        clientes_cola = []
+        clientes_sistema = []
+        tiempo_promedio_cola = []
+        tiempo_promedio_sistema = []
+        utilizacion_servidor = []
+        metricas_salida = []
+        
+        for m in metricas_simulacion:
             clientes_cola.append(m['promedio_clientes_cola'])
             clientes_sistema.append(m['promedio_clientes_sistema'])
             tiempo_promedio_cola.append(m['tiempo_promedio_cola'])
             tiempo_promedio_sistema.append(m['tiempo_promedio_sistema'])
             utilizacion_servidor.append(m['utilizacion_servidor'])
 
-        #plt.hist(clientes_cola)
-        #plt.show()
-        #print('Clientes en cola ' + str(clientes_cola))
-        self.informa_estadisticos(clientes_cola)
+        # clientes_cola_avg = stats.mean(clientes_cola)
+        # clientes_sistema_avg = stats.mean(clientes_sistema)
+        # tiempo_promedio_cola_avg = stats.mean(tiempo_promedio_cola)
+        # tiempo_promedio_sistema_avg = stats.mean(tiempo_promedio_sistema)
+        # utilizacion_servidor_avg = stats.mean(utilizacion_servidor)
 
 
-        #plt.hist(clientes_sistema)
-        #plt.show()
-        print('Clientes en sistema ' )#+ str(clientes_sistema))
-        self.informa_estadisticos(clientes_sistema)
+        clientes_cola_avg = clientes_cola
+        clientes_sistema_avg = clientes_sistema
+        tiempo_promedio_cola_avg = tiempo_promedio_cola
+        tiempo_promedio_sistema_avg = tiempo_promedio_sistema
+        utilizacion_servidor_avg = utilizacion_servidor
 
+        metricas = {}
+        metricas['clientes_cola_avg'] = clientes_cola_avg
+        metricas['clientes_sistema_avg'] = clientes_sistema_avg 
+        metricas['tiempo_promedio_cola_avg'] = tiempo_promedio_cola_avg 
+        metricas['tiempo_promedio_sistema_avg'] = tiempo_promedio_sistema_avg 
+        metricas['utilizacion_servidor_avg'] = utilizacion_servidor_avg 
 
-        #plt.hist(tiempo_promedio_cola)
-        #plt.show()
-        print('Tiempo promedio en cola ' )#+ str(tiempo_promedio_cola))
-        self.informa_estadisticos(tiempo_promedio_cola)
-
-
-        #plt.hist(tiempo_promedio_sistema)
-        #plt.show()
-        print('Tiempo promdio en sistema ' )# + str(tiempo_promedio_sistema))
-        self.informa_estadisticos(tiempo_promedio_sistema)
-
-        #plt.hist(utilizacion_servidor)
-        #plt.show()
-        print('Utilizacion del servidor ' )#+ str(utilizacion_servidor))
-        self.informa_estadisticos(utilizacion_servidor)
+        return metricas
 
 
 
@@ -312,10 +364,21 @@ if __name__ == "__main__":
 
     print('MM1')
 
-    tasas_servicio = []
-    tasas_arribos = []
-    tamaños_cola = [0,2,5,10,50]
+    # tasas_servicio = []
+    # tasas_arribos = []
+    # tamaños_cola = [0,2,5,10,50]
+    tasas_servicio = 0.5
+    tasas_arribos = [0.25, 0.5, 0.75, 1, 1.25]
+    tasas_arribos = [t*tasas_servicio for t in tasas_arribos]
+    corridas = 10
 
-    mm1 = Queue_mm1(num_events, mean_interarrival, mean_service, num_delays_required, Q_LIMIT)
-    mm1.simmulate()
-    
+    metricas_tasas = []
+
+    for t in tasas_arribos:
+        mean_interarrival = t
+        mm1 = Queue_mm1(num_events, mean_interarrival, mean_service, num_delays_required, Q_LIMIT)
+        metricas = mm1.simmulate()
+        metricas_tasas.append(metricas)
+
+    mm1.grafica_metricas(metricas_tasas)
+        # print(metricas)
