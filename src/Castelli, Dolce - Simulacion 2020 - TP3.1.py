@@ -246,7 +246,7 @@ class Queue_mm1():
         # self.grafica_metricas(metricas_simulacion)
         return self.devuelve_metricas(metricas_simulacion)
 
-    def grafica_metricas(self, metricas_simulacion):
+    def grafica_metricas_conjunto(self, metricas_simulacion):
         
         clientes_cola = []
         clientes_sistema = []
@@ -264,7 +264,8 @@ class Queue_mm1():
 
         
         tasas_arribos = [0.25, 0.5, 0.75, 1, 1.25]
-        fig=plt.figure()
+        fig=plt.figure(constrained_layout=True)
+
         fig.add_subplot(3,2,1)
         plt.plot(clientes_cola)
         plt.title("Clientes promedio en cola")
@@ -302,6 +303,85 @@ class Queue_mm1():
 
         plt.show()
  
+
+    def grafica_metricas(self, metricas, mean_interarrival, mean_service):
+        
+        par_mu = 1 / mean_interarrival 
+        par_lambda = 1 / mean_service
+
+        clientes_cola = []
+        clientes_sistema = []
+        tiempo_promedio_cola = []
+        tiempo_promedio_sistema = []
+        utilizacion_servidor = []
+        
+        clientes_cola = metricas['clientes_cola_avg']
+        clientes_sistema = metricas['clientes_sistema_avg']
+        tiempo_promedio_cola = metricas['tiempo_promedio_cola_avg']
+        tiempo_promedio_sistema = metricas['tiempo_promedio_sistema_avg']
+        utilizacion_servidor = metricas['utilizacion_servidor_avg']
+
+        graficas = [clientes_cola, clientes_sistema, tiempo_promedio_cola, tiempo_promedio_sistema, utilizacion_servidor]
+        titulos = ['Clientes promedio en cola', 'Clientes promedio en sistema', 'Tiempo promedio en cola', 'Tiempo promedio en sistema', 'Utilizacion del servidor']
+
+        fig, axs = plt.subplots(3, 2, constrained_layout=True)
+        fig.suptitle('Métricas λ =' + str(par_lambda) + ', μ = ' + str(par_mu))
+
+        cont = 0
+        a = 0
+        ax = plt.Subplot 
+
+        for i, grafica in enumerate(graficas,start=0):
+            
+            if cont == 2:
+                cont = 0
+                a += 1
+
+            ax = axs[a][cont]
+            ax.plot(grafica)
+            # ax.set_xlabel("Casilla")
+            # ax.set_ylabel("Frecuencia Absoluta")
+            ax.set_title(titulos[i])
+
+            cont += 1   
+
+            # fig.add_subplot(3,2,1)
+            # plt.plot(clientes_cola)
+            # plt.title("Clientes promedio en cola")
+            # # plt.show()
+            # # print('Clientes en cola ' + str(clientes_cola))
+            # # self.informa_estadisticos(clientes_cola)
+
+            # fig.add_subplot(3,2,2)
+            # plt.plot(clientes_sistema)
+            # plt.title("Clientes promedio en sistema")
+            # # plt.show()
+            # # # print('Clientes en sistema ' )#+ str(clientes_sistema))
+            # # # self.informa_estadisticos(clientes_sistema)
+
+            # fig.add_subplot(3,2,3)
+            # plt.plot(tiempo_promedio_cola)
+            # plt.title("Tiempo promedio en cola")
+            # # plt.show()
+            # # # print('Tiempo promedio en cola ' )#+ str(tiempo_promedio_cola))
+            # # # self.informa_estadisticos(tiempo_promedio_cola)
+
+            # fig.add_subplot(3,2,4)
+            # plt.plot(tiempo_promedio_sistema)
+            # plt.title("Tiempo promedio en sistema")
+            # # plt.show()
+            # # # print('Tiempo promdio en sistema ' )# + str(tiempo_promedio_sistema))
+            # # # self.informa_estadisticos(tiempo_promedio_sistema)
+
+            # fig.add_subplot(3,2,5)
+            # plt.plot(utilizacion_servidor)
+            # plt.title("Utilizacion del servidor")
+            # # plt.show()
+            # # # print('Utilizacion del servidor ' )#+ str(utilizacion_servidor))
+            # # # self.informa_estadisticos(utilizacion_servidor)
+
+        plt.show()
+
     def devuelve_metricas(self, metricas_simulacion):
         
         clientes_cola = []
@@ -358,7 +438,6 @@ if __name__ == "__main__":
     #PARAMETROS
     num_events = 2
     mean_service = 0.5
-    mean_interarrival = mean_service * 0.25
     num_delays_required = 1000
     Q_LIMIT = 100000
 
@@ -378,7 +457,8 @@ if __name__ == "__main__":
         mean_interarrival = t
         mm1 = Queue_mm1(num_events, mean_interarrival, mean_service, num_delays_required, Q_LIMIT)
         metricas = mm1.simmulate()
+        mm1.grafica_metricas(metricas, mean_interarrival, mean_service)
         metricas_tasas.append(metricas)
 
-    mm1.grafica_metricas(metricas_tasas)
+    mm1.grafica_metricas_conjunto(metricas_tasas)
         # print(metricas)
