@@ -1,6 +1,6 @@
 from enum import Enum
 from random import random,seed
-from numpy import log
+from numpy import log, average
 import matplotlib.pyplot as plt
 import statistics as stats
 from datetime import datetime
@@ -220,9 +220,12 @@ class Queue_mm1():
 
         cant_simulaciones = 10
         metricas_simulacion = []
+        historico_cola = []
+        
 
         for i in range(cant_simulaciones):
 
+            historico_cola_simulacion = []
             if i % 100 == 0:
                 print('Simulado ' + str(i) + '/' + str(cant_simulaciones))
 
@@ -232,6 +235,9 @@ class Queue_mm1():
                 self.timing()
                 self.update_time_avg_stats()
 
+                #Para calcular la probabilidad de n clientes en cola
+                historico_cola_simulacion.append(self.num_in_q)
+
                 if self.next_event_type == 1:
                     self.arrive()
                 elif self.next_event_type == 2:
@@ -240,11 +246,13 @@ class Queue_mm1():
             metricas = self.calcula_metricas()
             metricas_simulacion.append(metricas)
 
+            historico_cola.append(historico_cola_simulacion)
+
         #for m in metricas_simulacion:
         #    print(m) 
 
         # self.grafica_metricas(metricas_simulacion)
-        return self.devuelve_metricas(metricas_simulacion)
+        return self.devuelve_metricas(metricas_simulacion), historico_cola
 
     def grafica_metricas_conjunto(self, metricas_simulacion):
         
@@ -338,7 +346,9 @@ class Queue_mm1():
                 a += 1
 
             ax = axs[a][cont]
+           # ax.set_xticks([i for i in range(len(grafica))])
             ax.plot(grafica)
+            ax.hlines(average(grafica), 0, len(grafica), colors='r', linestyles="dashed", lw=1)
             # ax.set_xlabel("Casilla")
             # ax.set_ylabel("Frecuencia Absoluta")
             ax.set_title(titulos[i])
@@ -446,19 +456,29 @@ if __name__ == "__main__":
     # tasas_servicio = []
     # tasas_arribos = []
     # tamaños_cola = [0,2,5,10,50]
-    tasas_servicio = 0.5
-    tasas_arribos = [0.25, 0.5, 0.75, 1, 1.25]
-    tasas_arribos = [t*tasas_servicio for t in tasas_arribos]
+    
+    par_mu = 1/mean_service
+    par_lambdas = [0.25, 0.5, 0.75, 1, 1.25]
+    par_lambdas = [t*par_mu for t in par_lambdas]
+
+    print(par_lambdas)
     corridas = 10
 
     metricas_tasas = []
 
-    for t in tasas_arribos:
-        mean_interarrival = t
+    for t in par_lambdas:
+        mean_interarrival = 1/t
         mm1 = Queue_mm1(num_events, mean_interarrival, mean_service, num_delays_required, Q_LIMIT)
-        metricas = mm1.simmulate()
+        metricas, historico = mm1.simmulate()
         mm1.grafica_metricas(metricas, mean_interarrival, mean_service)
         metricas_tasas.append(metricas)
+
+        # for i in historico:
+        #     print(i)
+        #     plt.hist(i)
+        # #     plt.show()
+        # plt.hist(historico[0])
+        # plt.show()
 
     mm1.grafica_metricas_conjunto(metricas_tasas)
         # print(metricas)
